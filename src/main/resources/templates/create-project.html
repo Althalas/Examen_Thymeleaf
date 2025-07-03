@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html th:replace="fragments/layout :: layout(~{::title}, ~{::section})">
+
+<head>
+    <title th:text="#{page.create.project}">Créer un Projet</title>
+</head>
+
+<section>
+    <!-- En-tête de la page -->
+    <div class="mb-4">
+        <h1 class="h2 mb-2" th:text="#{page.create.project}">
+            <i class="bi bi-folder-plus"></i> Créer un nouveau projet
+        </h1>
+        <p class="text-muted" th:text="#{project.create.description}">Créez un nouveau projet pour organiser vos tâches</p>
+    </div>
+    
+    <!-- Formulaire -->
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-folder"></i> <span th:text="#{form.project.info}">Informations du projet</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/projects/create-project}" method="post" th:object="${project}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label" th:text="#{form.project.name}">
+                                <i class="bi bi-folder"></i> Nom du projet
+                            </label>
+                            <input type="text" class="form-control" id="name" name="name" 
+                                   th:field="*{name}"
+                                   th:placeholder="#{form.project.name.placeholder}" 
+                                   th:class="${#fields.hasErrors('name')} ? 'form-control is-invalid' : 'form-control'">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">
+                                Erreur de validation
+                            </div>
+                            <div class="form-text" th:unless="${#fields.hasErrors('name')}" th:text="#{form.project.name.help}">
+                                Donnez un nom descriptif à votre projet
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="creator" class="form-label" th:text="#{form.project.creator}">
+                                <i class="bi bi-person"></i> Créateur
+                            </label>
+                            <select class="form-select" id="creator" name="creator.id" 
+                                    th:class="${#fields.hasErrors('creator')} ? 'form-select is-invalid' : 'form-select'">
+                                <option value="" th:text="#{form.select.creator}">-- Sélectionner un créateur --</option>
+                                <option th:each="user : ${users}" 
+                                        th:value="${user.id}" 
+                                        th:text="${user.username}">Nom d'utilisateur</option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('creator')}" th:errors="*{creator}">
+                                Erreur de validation
+                            </div>
+                            <div class="form-text" th:unless="${#fields.hasErrors('creator')}" th:text="#{form.project.creator.help}">
+                                Sélectionnez l'utilisateur qui créera ce projet
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a th:href="@{/projects}" class="btn btn-secondary me-md-2" th:text="#{action.cancel}">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-success" th:text="#{action.create}">
+                                <i class="bi bi-check-circle"></i> Créer le projet
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</html> 

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html th:replace="fragments/layout :: layout(~{::title}, ~{::section})">
+
+<head>
+    <title th:text="#{page.create.user}">Créer un Utilisateur</title>
+</head>
+
+<section>
+    <!-- En-tête de la page -->
+    <div class="mb-4">
+        <h1 class="h2 mb-2" th:text="#{page.create.user}">
+            <i class="bi bi-person-plus"></i> Créer un nouvel utilisateur
+        </h1>
+        <p class="text-muted" th:text="#{user.create.description}">Ajoutez un nouvel utilisateur à votre équipe</p>
+    </div>
+    
+    <!-- Formulaire -->
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-person"></i> <span th:text="#{form.user.info}">Informations de l'utilisateur</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/users/create}" method="post" th:object="${user}">
+                        <div class="mb-3">
+                            <label for="username" class="form-label" th:text="#{form.user.username}">
+                                <i class="bi bi-person"></i> Nom d'utilisateur
+                            </label>
+                                                        <input type="text" class="form-control" id="username" name="username" 
+                                   th:field="*{username}"
+                                   th:placeholder="#{form.user.username.placeholder}" 
+                                   th:class="${#fields.hasErrors('username')} ? 'form-control is-invalid' : 'form-control'">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">
+                                Erreur de validation
+                            </div>
+                            <div class="form-text" th:unless="${#fields.hasErrors('username')}" th:text="#{form.user.username.help}">
+                                Choisissez un nom d'utilisateur
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a th:href="@{/users}" class="btn btn-secondary me-md-2" th:text="#{action.cancel}">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-primary" th:text="#{action.create}">
+                                <i class="bi bi-check-circle"></i> Créer l'utilisateur
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</html>
