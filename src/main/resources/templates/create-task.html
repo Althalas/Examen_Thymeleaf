@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html th:replace="fragments/layout :: layout(~{::title}, ~{::section})">
+
+<head>
+    <title th:text="#{page.create.task}">Créer une Tâche</title>
+</head>
+
+<section>
+    <!-- En-tête de la page -->
+    <div class="mb-4">
+        <h1 class="h2 mb-2" th:text="#{page.create.task}">
+            <i class="bi bi-list-task"></i> Créer une nouvelle tâche
+        </h1>
+        <p class="text-muted" th:text="#{task.create.description}">Ajoutez une nouvelle tâche à un projet</p>
+    </div>
+    
+    <!-- Formulaire -->
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-list-task"></i> <span th:text="#{form.task.info}">Informations de la tâche</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/tasks/create}" method="post" th:object="${task}">
+                        <div class="mb-3">
+                            <label for="title" class="form-label" th:text="#{form.task.title}">
+                                <i class="bi bi-list-task"></i> Titre de la tâche
+                            </label>
+                            <input type="text" class="form-control" id="title" name="title" 
+                                   th:field="*{title}"
+                                   th:placeholder="#{form.task.title.placeholder}" 
+                                   th:class="${#fields.hasErrors('title')} ? 'form-control is-invalid' : 'form-control'">
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+                                Erreur de validation
+                            </div>
+                            <div class="form-text" th:unless="${#fields.hasErrors('title')}" th:text="#{form.task.title.help}">
+                                Décrivez brièvement la tâche à accomplir
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="project" class="form-label" th:text="#{form.task.project}">
+                                <i class="bi bi-folder"></i> Projet
+                            </label>
+                            <select class="form-select" id="project" name="project.id" 
+                                    th:class="${#fields.hasErrors('project')} ? 'form-select is-invalid' : 'form-select'">
+                                <option value="" th:text="#{form.select.project}">-- Sélectionner un projet --</option>
+                                <option th:each="project : ${projects}" 
+                                        th:value="${project.id}" 
+                                        th:text="${project.name}">Nom du projet</option>
+                            </select>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('project')}" th:errors="*{project}">
+                                Erreur de validation
+                            </div>
+                            <div class="form-text" th:unless="${#fields.hasErrors('project')}" th:text="#{form.task.project.help}">
+                                Sélectionnez le projet auquel appartient cette tâche
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="assignee" class="form-label" th:text="#{form.task.assignee}">
+                                <i class="bi bi-person"></i> Assigné à (optionnel)
+                            </label>
+                            <select class="form-select" id="assignee" name="assignee.id">
+                                <option value="" th:text="#{form.select.assignee}">-- Aucun assigné --</option>
+                                <option th:each="user : ${users}" 
+                                        th:value="${user.id}" 
+                                        th:text="${user.username}">Nom d'utilisateur</option>
+                            </select>
+                            <div class="form-text" th:text="#{form.task.assignee.help}">
+                                Vous pouvez assigner cette tâche à un utilisateur ou la laisser non assignée
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a th:href="@{/tasks}" class="btn btn-secondary me-md-2" th:text="#{action.cancel}">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-info text-white" th:text="#{action.create}">
+                                <i class="bi bi-check-circle"></i> Créer la tâche
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</html> 
