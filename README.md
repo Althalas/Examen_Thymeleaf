@@ -98,7 +98,7 @@ src/main/
 ## Installation et démarrage
 
 ### Prérequis
-- Java 17 ou supérieur
+- Java 21
 - Maven 3.6+
 
 ### Installation
