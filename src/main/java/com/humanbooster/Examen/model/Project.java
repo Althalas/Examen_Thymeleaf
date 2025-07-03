@@ -3,6 +3,9 @@ package com.humanbooster.Examen.model;
 import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Modèle représentant un projet dans l'application
@@ -25,13 +28,18 @@ public class Project {
     /**
      * Nom du projet
      * Utilisé pour l'identification et l'affichage
+     * Doit être non vide et entre 3 et 100 caractères
      */
+    @NotBlank(message = "Le nom du projet est obligatoire")
+    @Size(min = 3, max = 100, message = "Le nom du projet doit contenir entre 3 et 100 caractères")
     private String name;
     
     /**
      * Utilisateur qui a créé le projet
      * Référence vers l'objet User créateur
+     * Doit être non null
      */
+    @NotNull(message = "Le créateur du projet est obligatoire")
     private User creator;
     
     /**

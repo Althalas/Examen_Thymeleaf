@@ -1,6 +1,9 @@
 package com.humanbooster.Examen.model;
 
 import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Modèle représentant une tâche dans l'application
@@ -24,7 +27,10 @@ public class Task {
     /**
      * Titre de la tâche
      * Description courte de ce qui doit être fait
+     * Doit être non vide et entre 3 et 200 caractères
      */
+    @NotBlank(message = "Le titre de la tâche est obligatoire")
+    @Size(min = 3, max = 200, message = "Le titre de la tâche doit contenir entre 3 et 200 caractères")
     private String title;
     
     /**
@@ -42,6 +48,8 @@ public class Task {
     /**
      * Projet auquel appartient la tâche
      * Référence vers l'objet Project parent
+     * Doit être non null
      */
+    @NotNull(message = "Le projet est obligatoire")
     private Project project;
 }

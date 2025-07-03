@@ -7,6 +7,8 @@ import com.humanbooster.Examen.service.UserService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import com.humanbooster.Examen.model.User;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 
 /**
  * Contrôleur pour la gestion des utilisateurs
@@ -58,21 +60,29 @@ public class UserController {
     @GetMapping("/users/create")
     public String showCreateUserForm(Model model) {
         model.addAttribute("title", "Créer un utilisateur");
+        model.addAttribute("user", new User());
         return "create-user";
     }
     
     /**
      * Traite la création d'un nouvel utilisateur
      * 
-     * Cette méthode reçoit les données du formulaire de création
-     * et sauvegarde le nouvel utilisateur. Redirige ensuite vers
-     * la liste des utilisateurs.
+     * Cette méthode reçoit les données du formulaire de création,
+     * valide les données et sauvegarde le nouvel utilisateur.
+     * En cas d'erreur de validation, retourne au formulaire avec les erreurs.
      * 
      * @param user Utilisateur à créer (récupéré depuis le formulaire)
-     * @return Redirection vers la liste des utilisateurs
+     * @param bindingResult Résultat de la validation
+     * @param model Modèle Spring pour passer des données à la vue
+     * @return Redirection vers la liste des utilisateurs ou retour au formulaire en cas d'erreur
      */
     @PostMapping("/users/create")
-    public String createUser(@ModelAttribute User user) {
+    public String createUser(@Valid @ModelAttribute User user, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("title", "Créer un utilisateur");
+            return "create-user";
+        }
+        
         userService.createUser(user);
         return "redirect:/users";
     }

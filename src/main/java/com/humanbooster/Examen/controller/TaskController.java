@@ -14,6 +14,8 @@ import com.humanbooster.Examen.model.TaskStatus;
 import com.humanbooster.Examen.service.TaskService;
 import com.humanbooster.Examen.service.UserService;
 import com.humanbooster.Examen.service.ProjectService;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 
 /**
  * Contrôleur pour la gestion des tâches
@@ -74,6 +76,7 @@ public class TaskController {
     @GetMapping("/tasks/create")
     public String showCreateTaskForm(Model model) {
         model.addAttribute("title", "Créer une Tâche");
+        model.addAttribute("task", new Task());
         model.addAttribute("users", userService.getAllUsers());
         model.addAttribute("projects", projectService.getAllProjects());
         return "create-task";
@@ -83,19 +86,37 @@ public class TaskController {
      * Traite la création d'une nouvelle tâche
      * 
      * Cette méthode reçoit les données du formulaire de création,
-     * récupère l'utilisateur assigné et le projet par leurs IDs,
-     * définit le statut initial à TODO et sauvegarde la tâche.
-     * Redirige ensuite vers la liste des tâches.
+     * valide les données, récupère l'utilisateur assigné et le projet
+     * par leurs IDs, définit le statut initial à TODO et sauvegarde la tâche.
+     * En cas d'erreur de validation, retourne au formulaire avec les erreurs.
      * 
      * @param task Tâche à créer (récupérée depuis le formulaire)
+     * @param bindingResult Résultat de la validation
      * @param assigneeId Identifiant de l'utilisateur assigné (optionnel)
-     * @param projectId Identifiant du projet auquel appartient la tâche
-     * @return Redirection vers la liste des tâches
+     * @param projectId Identifiant du projet auquel appartient la tâche (optionnel)
+     * @param model Modèle Spring pour passer des données à la vue
+     * @return Redirection vers la liste des tâches ou retour au formulaire en cas d'erreur
      */
     @PostMapping("/tasks/create")
-    public String createTask(@ModelAttribute Task task, 
+    public String createTask(@Valid @ModelAttribute Task task, BindingResult bindingResult,
                            @RequestParam(value = "assignee.id", required = false) Long assigneeId,
-                           @RequestParam("project.id") Long projectId) {
+                           @RequestParam(value = "project.id", required = false) Long projectId, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("title", "Créer une Tâche");
+            model.addAttribute("users", userService.getAllUsers());
+            model.addAttribute("projects", projectService.getAllProjects());
+            return "create-task";
+        }
+        
+        // Vérifier que projectId n'est pas null
+        if (projectId == null) {
+            bindingResult.rejectValue("project", "error.project", "Le projet est obligatoire");
+            model.addAttribute("title", "Créer une Tâche");
+            model.addAttribute("users", userService.getAllUsers());
+            model.addAttribute("projects", projectService.getAllProjects());
+            return "create-task";
+        }
+        
         // Récupérer l'utilisateur assigné
         if (assigneeId != null) {
             User assignee = userService.getUserById(assigneeId);
@@ -104,6 +125,14 @@ public class TaskController {
         
         // Récupérer le projet
         Project project = projectService.getProjectById(projectId);
+        if (project == null) {
+            bindingResult.rejectValue("project", "error.project", "Le projet sélectionné n'existe pas");
+            model.addAttribute("title", "Créer une Tâche");
+            model.addAttribute("users", userService.getAllUsers());
+            model.addAttribute("projects", projectService.getAllProjects());
+            return "create-task";
+        }
+        
         task.setProject(project);
         
         // Définir le statut initial à TODO

@@ -12,6 +12,8 @@ import com.humanbooster.Examen.model.User;
 import com.humanbooster.Examen.service.ProjectService;
 import com.humanbooster.Examen.service.UserService;
 import com.humanbooster.Examen.service.TaskService;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 
 /**
  * Contrôleur pour la gestion des projets
@@ -111,6 +113,7 @@ public class ProjectController {
     @GetMapping("/projects/create")
     public String showCreateProjectForm(Model model) {
         model.addAttribute("title", "Créer un Projet");
+        model.addAttribute("project", new Project());
         model.addAttribute("users", userService.getAllUsers());
         return "create-project";
     }
@@ -119,16 +122,41 @@ public class ProjectController {
      * Traite la création d'un nouveau projet
      * 
      * Cette méthode reçoit les données du formulaire de création,
-     * récupère l'utilisateur créateur par son ID et sauvegarde
-     * le nouveau projet. Redirige ensuite vers la liste des projets.
+     * valide les données, récupère l'utilisateur créateur par son ID
+     * et sauvegarde le nouveau projet.
+     * En cas d'erreur de validation, retourne au formulaire avec les erreurs.
      * 
      * @param project Projet à créer (récupéré depuis le formulaire)
-     * @param creatorId Identifiant de l'utilisateur créateur
-     * @return Redirection vers la liste des projets
+     * @param bindingResult Résultat de la validation
+     * @param creatorId Identifiant de l'utilisateur créateur (optionnel)
+     * @param model Modèle Spring pour passer des données à la vue
+     * @return Redirection vers la liste des projets ou retour au formulaire en cas d'erreur
      */
     @PostMapping("/projects/create-project")
-    public String createProject(@ModelAttribute Project project, @RequestParam("creator.id") Long creatorId) {
+    public String createProject(@Valid @ModelAttribute Project project, BindingResult bindingResult, 
+                               @RequestParam(value = "creator.id", required = false) Long creatorId, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("title", "Créer un Projet");
+            model.addAttribute("users", userService.getAllUsers());
+            return "create-project";
+        }
+        
+        // Vérifier que creatorId n'est pas null
+        if (creatorId == null) {
+            bindingResult.rejectValue("creator", "error.creator", "Le créateur est obligatoire");
+            model.addAttribute("title", "Créer un Projet");
+            model.addAttribute("users", userService.getAllUsers());
+            return "create-project";
+        }
+        
         User creator = userService.getUserById(creatorId);
+        if (creator == null) {
+            bindingResult.rejectValue("creator", "error.creator", "L'utilisateur sélectionné n'existe pas");
+            model.addAttribute("title", "Créer un Projet");
+            model.addAttribute("users", userService.getAllUsers());
+            return "create-project";
+        }
+        
         project.setCreator(creator);
         projectService.createProject(project);
         return "redirect:/projects";
