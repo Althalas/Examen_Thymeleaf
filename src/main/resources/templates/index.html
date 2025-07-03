@@ -1,13 +1,94 @@
 <!DOCTYPE html>
-<html th:replace="fragments/layout :: layout(~{::title}, ~{::section_index})">
+<html th:replace="fragments/layout :: layout(~{::title}, ~{::section})">
 
 <head>
-    <title>Accueil</title>
+    <title th:text="#{page.home}">Accueil</title>
 </head>
 
-<section th:fragment="section_index">
-    <h2>Binvenue</h2>
-    <p>Ceci est une page de bienvenue</p>
+<section>
+    <!-- En-tête de la page -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="display-4 text-primary mb-3" th:text="#{welcome}">
+                <i class="bi bi-kanban"></i> Gestion de Projets
+            </h1>
+            <p class="lead text-muted" th:text="#{welcome.message}">
+                Bienvenue dans l'application de gestion de projets
+            </p>
+        </div>
+    </div>
+    
+    <!-- Menu principal avec cards Bootstrap -->
+    <div class="row g-4">
+        <!-- Section Utilisateurs -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-people-fill text-primary" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="card-title" th:text="#{page.users}">Utilisateurs</h5>
+                    <p class="card-text text-muted" th:text="#{users.description}">
+                        Gérez les utilisateurs de votre équipe
+                    </p>
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/users}" class="btn btn-primary" th:text="#{list.users}">
+                            <i class="bi bi-list"></i> Liste des utilisateurs
+                        </a>
+                        <a th:href="@{/users/create}" class="btn btn-outline-primary" th:text="#{page.create.user}">
+                            <i class="bi bi-person-plus"></i> Créer un utilisateur
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section Projets -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-folder-fill text-success" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="card-title" th:text="#{page.projects}">Projets</h5>
+                    <p class="card-text text-muted" th:text="#{projects.description}">
+                        Créez et gérez vos projets
+                    </p>
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/projects}" class="btn btn-success" th:text="#{list.projects}">
+                            <i class="bi bi-list"></i> Liste des projets
+                        </a>
+                        <a th:href="@{/projects/create}" class="btn btn-outline-success" th:text="#{page.create.project}">
+                            <i class="bi bi-plus-circle"></i> Créer un projet
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section Tâches -->
+        <div class="col-md-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <i class="bi bi-list-task text-info" style="font-size: 3rem;"></i>
+                    </div>
+                    <h5 class="card-title" th:text="#{page.tasks}">Tâches</h5>
+                    <p class="card-text text-muted" th:text="#{tasks.description}">
+                        Organisez et suivez vos tâches
+                    </p>
+                    <div class="d-grid gap-2">
+                        <a th:href="@{/tasks}" class="btn btn-info text-white" th:text="#{list.tasks}">
+                            <i class="bi bi-list"></i> Liste des tâches
+                        </a>
+                        <a th:href="@{/tasks/create}" class="btn btn-outline-info" th:text="#{page.create.task}">
+                            <i class="bi bi-plus-circle"></i> Créer une tâche
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </section>
 
 </html>
