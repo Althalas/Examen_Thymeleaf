@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html th:replace="fragments/layout :: layout(~{::title}, ~{::section})">
+
+<head>
+    <title th:text="#{page.tasks}">Tâches</title>
+</head>
+
+<section>
+    <!-- En-tête de la page -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 mb-2" th:text="#{list.tasks}">
+                <i class="bi bi-list-task"></i> Liste des Tâches
+            </h1>
+            <p class="text-muted" th:text="#{tasks.description}">Organisez et suivez vos tâches</p>
+        </div>
+        <a th:href="@{/tasks/create}" class="btn btn-info text-white" th:text="#{page.create.task}">
+            <i class="bi bi-plus-circle"></i> Créer une tâche
+        </a>
+    </div>
+    
+    <!-- Contenu principal -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <!-- Message si aucune tâche -->
+            <div th:if="${tasks.empty}" class="text-center py-5">
+                <i class="bi bi-list-task text-muted" style="font-size: 3rem;"></i>
+                <h5 class="text-muted mt-3" th:text="#{list.no.tasks}">Aucune tâche trouvée</h5>
+                <p class="text-muted" th:text="#{tasks.empty.message}">Commencez par créer votre première tâche</p>
+                <a th:href="@{/tasks/create}" class="btn btn-info text-white mt-3" th:text="#{page.create.task}">
+                    <i class="bi bi-plus-circle"></i> Créer une tâche
+                </a>
+            </div>
+            
+            <!-- Tableau des tâches -->
+            <div th:if="${!tasks.empty}">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" th:text="#{table.id}">ID</th>
+                                <th scope="col" th:text="#{table.title}">Titre de la tâche</th>
+                                <th scope="col" th:text="#{table.status}">Statut</th>
+                                <th scope="col" th:text="#{table.assignee}">Assigné à</th>
+                                <th scope="col" th:text="#{table.project}">Projet</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="task : ${tasks}">
+                                <td>
+                                    <span class="badge bg-secondary" th:text="${task.id}">ID</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <span th:text="${task.title}">Titre de la tâche</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span th:if="${task.status != null}" 
+                                          th:class="${'badge ' + (task.status == 'TODO' ? 'bg-warning' : 
+                                                               task.status == 'IN_PROGRESS' ? 'bg-info' : 
+                                                               task.status == 'DONE' ? 'bg-success' : 'bg-secondary')}"
+                                          th:text="${task.status}">Statut</span>
+                                    <span th:if="${task.status == null}" class="badge bg-secondary">N/A</span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-person-circle text-primary me-2"></i>
+                                        <span th:if="${task.assignee != null}" th:text="${task.assignee.username}">Assigné à</span>
+                                        <span th:if="${task.assignee == null}" class="text-muted">Aucun assigné</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-folder text-success me-2"></i>
+                                        <span th:if="${task.project != null}" th:text="${task.project.name}">Projet</span>
+                                        <span th:if="${task.project == null}" class="text-muted">Aucun projet</span>
+                                    </div>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Statistiques -->
+                <div class="mt-3 pt-3 border-top">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle"></i>
+                        <span th:text="${#lists.size(tasks)}">0</span> <span th:text="#{stats.tasks}">tâche(s)</span> <span th:text="#{stats.total}">au total</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+</html> 
