@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html th:fragment="layout(title, content)">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:replace="${title}">Titre par défaut</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a th:href="@{/}">Accueil</a></li>
+                <li><a th:href="@{/projects}">Projets</a></li>
+                <li><a th:href="@{/users}">Utilisateurs</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        <div th:replace="${content}"></div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 - Application de gestion de projets</p>
+    </footer>
+</body>
+</html>
